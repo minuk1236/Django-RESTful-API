@@ -22,13 +22,18 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         
-        if self.request.user.is_authenticated:
-            qs = qs.filter(author = self.request.user)
+        if self.request.user.is_staff:
+            qs= qs.all()
+            return qs
         else:
-            qs = qs.none()
+            if self.request.user.is_authenticated:
+                qs = qs.filter(author = self.request.user)
+            else:
+                qs = qs.none()
 
-        return qs
+            return qs
 
+       
 class ImgViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
